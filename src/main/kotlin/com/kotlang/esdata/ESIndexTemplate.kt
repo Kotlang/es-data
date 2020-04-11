@@ -1,13 +1,12 @@
 package com.kotlang.esdata
 
 import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.indices.CreateIndexRequest
 import org.elasticsearch.client.indices.GetIndexRequest
 
-class ESIndexTemplate(private val client: RestHighLevelClient) {
+open class ESIndexTemplate(private val client: ESClient) {
 
-    fun getMapping(entity: ESEntity): Map<String, Any> {
+    open fun getMapping(entity: ESEntity): Map<String, Any> {
         val mapping = mutableMapOf<String, Any>()
 
         val fields = entity.javaClass.declaredFields
@@ -22,7 +21,7 @@ class ESIndexTemplate(private val client: RestHighLevelClient) {
         return mapOf("properties" to mapping)
     }
 
-    fun getOrCreateIndex(entity: ESEntity) {
+    open fun getOrCreateIndex(entity: ESEntity) {
         val getIndexRequest = GetIndexRequest(entity.getIndexName())
 
         if (!client.indices().exists(getIndexRequest, RequestOptions.DEFAULT)) {

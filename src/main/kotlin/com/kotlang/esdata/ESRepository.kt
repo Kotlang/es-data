@@ -4,30 +4,30 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.client.RequestOptions
-import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.common.xcontent.XContentType
 import java.util.*
 
-abstract class ESRepository<T: ESEntity> (private val client: RestHighLevelClient) {
-    private val mapper = jacksonObjectMapper()
-    private val index = ESIndexTemplate(client)
+open class ESRepository (
+    val client: ESClient,
+    val index: ESIndexTemplate = ESIndexTemplate(client)
+) {
+    val mapper = jacksonObjectMapper()
 
-    fun save(entity: T): T {
+    inline fun<reified T: ESEntity> save(entity: T): T {
         index.getOrCreateIndex(entity)
 
         val request = IndexRequest(entity.getIndexName())
         request.id(entity.id())
         request.source(mapper.writeValueAsString(entity), XContentType.JSON)
-        client.index(request, RequestOptions.DEFAULT)
+        client.index(request)
         return findById(entity).get()
     }
 
-    fun findById(entity: T): Optional<T> {
+    inline fun<reified T: ESEntity> findById(entity: T): Optional<T> {
         index.getOrCreateIndex(entity)
 
         val request = GetRequest(entity.getIndexName(), entity.id())
-        val response = client.get(request, RequestOptions.DEFAULT)
+        val response = client.get(request)
         return if (response.isExists) {
             val resEntity = mapper.readValue(response.sourceAsString, object : TypeReference<T>() {})
             Optional.of(resEntity)

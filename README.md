@@ -3,8 +3,8 @@ Simple transparent ORM for elasticsearch and Kotlin supporting rolling indices.
 
 - Provides Entity-Repository interfaces for elasticsearch in Kotlin/Java.
 - Supports rolling indices particularly to index documents in different indices based on a field in the document. 
-For ex. to index documents from different departments in different elasticsearch indices simply override getIndexName in entity 
-to index document based on department.
+For ex. to index documents from different countries in different elasticsearch indices. Look for domain
+based rolling index in below example.
 
 ## Installing
 
@@ -35,6 +35,9 @@ Token can be generated from https://github.com/settings/tokens
 
 ```kotlin
 class UserEntity(
+            @Field(type = FieldType.keyword)
+            val id: String,
+            @Field(type = FieldType.keyword)
             val domain: String,
             @Field(type = FieldType.keyword)
             var place: String? = null,
@@ -42,11 +45,18 @@ class UserEntity(
             var name: String? = null
     ): ESEntity() {
         override fun getIndexName(): String = "test_index_$domain"
-        override fun id(): String = "mockId"
+        override fun id(): String = id
     }
     
-class UserRepository (client: RestHighLevelClient): ESRepository<UserEntity>(client)
+val client = ESClient(RestClient.builder(HttpHost("localhost", 9200, "http")))
+val repository = ESRepository(client)
+// Will create a separate index as test_index_in
+repository.save(UserEntity("p001", "in", "Bengaluru", "Ghanshyam"))
+// Will search for document id p001 in index test_index_in
+val user = repository.findById(UserEntity(id = "p001", domain = "in"))
 ```
-UserRepository will give all standard methods to findById, save based on rolling index.
-ESIndexTemplate lets one create index with specific mappings defined using annotations on Entity.
+
+## Recommended usage
+Create a singleton for ESRepository wrapping ESClient.
+
 

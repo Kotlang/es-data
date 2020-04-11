@@ -18,7 +18,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 }
 
 test {
@@ -47,7 +47,7 @@ publishing {
         gpr(MavenPublication) {
             groupId = 'com.kotlang'
             artifactId = 'EsData'
-            version = '0.1'
+            version = '0.11'
 
             from(components.java)
         }
