@@ -1,6 +1,8 @@
 package com.kotlang.esdata
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
@@ -11,7 +13,8 @@ open class ESRepository (
     val client: ESClient,
     val index: ESIndexTemplate = ESIndexTemplate(client)
 ) {
-    val mapper = jacksonObjectMapper()
+    val mapper: ObjectMapper = jacksonObjectMapper().configure(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     inline fun<reified T: ESEntity> save(entity: T): T {
         index.getOrCreateIndex(entity)
