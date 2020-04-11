@@ -3,6 +3,7 @@ package com.kotlang.esdata
 import org.elasticsearch.client.RequestOptions
 import org.elasticsearch.client.RestHighLevelClient
 import org.elasticsearch.client.indices.CreateIndexRequest
+import org.elasticsearch.client.indices.GetIndexRequest
 
 class ESIndexTemplate(private val client: RestHighLevelClient) {
 
@@ -12,7 +13,7 @@ class ESIndexTemplate(private val client: RestHighLevelClient) {
         val fields = entity.javaClass.declaredFields
         for (field in fields) {
             val fieldAnnotation = field.annotations.
-            find { it is Field } as? Field
+                find { it is Field } as? Field
             fieldAnnotation?.let {
                 mapping[field.name] = mapOf("type" to it.type.name)
             }
@@ -21,10 +22,14 @@ class ESIndexTemplate(private val client: RestHighLevelClient) {
         return mapOf("properties" to mapping)
     }
 
-    fun createIndex(entity: ESEntity) {
-        val request = CreateIndexRequest(entity.getIndexName())
-        request.mapping(getMapping(entity))
-        client.indices().create(request, RequestOptions.DEFAULT)
+    fun getOrCreateIndex(entity: ESEntity) {
+        val getIndexRequest = GetIndexRequest(entity.getIndexName())
+
+        if (!client.indices().exists(getIndexRequest, RequestOptions.DEFAULT)) {
+            val createRequest = CreateIndexRequest(entity.getIndexName())
+            createRequest.mapping(getMapping(entity))
+            client.indices().create(createRequest, RequestOptions.DEFAULT)
+        }
     }
 }
 
