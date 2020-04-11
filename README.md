@@ -9,15 +9,17 @@ to index document based on department.
 ## Installing
 
 ### Gradle
+Add following details to build.gradle.kts
 
-Add following repository
 ```sh
-maven {
-	name = "GitHubPackages"
-	url = uri("https://maven.pkg.github.com/Kotlang/es-data")
-	credentials {
-                        username = System.env("USERNAME")
-                        password = System.env("TOKEN")
+repositories {
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/Kotlang/es-data")
+		credentials {
+				username = System.env("USERNAME")
+				password = System.env("TOKEN")
+		}
 	}
 }
 
