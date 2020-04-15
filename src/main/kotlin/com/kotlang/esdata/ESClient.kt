@@ -1,5 +1,7 @@
 package com.kotlang.esdata
 
+import org.elasticsearch.action.delete.DeleteRequest
+import org.elasticsearch.action.delete.DeleteResponse
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.get.GetResponse
 import org.elasticsearch.action.index.IndexRequest
@@ -14,5 +16,6 @@ open class ESClient (clientBuilder: RestClientBuilder) {
 
     open fun index(request: IndexRequest): IndexResponse = client.index(request, RequestOptions.DEFAULT)
     open fun get(request: GetRequest): GetResponse = client.get(request, RequestOptions.DEFAULT)
+    open fun delete(request: DeleteRequest): DeleteResponse = client.delete(request, RequestOptions.DEFAULT)
     open fun indices(): IndicesClient = client.indices()
 }

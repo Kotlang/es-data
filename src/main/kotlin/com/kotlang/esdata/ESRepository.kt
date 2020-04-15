@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.common.xcontent.XContentType
@@ -37,5 +38,12 @@ open class ESRepository (
         } else {
             Optional.empty()
         }
+    }
+
+    inline fun<reified T: ESEntity> deleteById(entity: T) {
+        index.getOrCreateIndex(entity)
+
+        val request = DeleteRequest(entity.getIndexName(), entity.id())
+        client.delete(request)
     }
 }

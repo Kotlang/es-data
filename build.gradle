@@ -47,7 +47,7 @@ publishing {
         gpr(MavenPublication) {
             groupId = 'com.kotlang'
             artifactId = 'EsData'
-            version = '0.13'
+            version = '0.14'
 
             from(components.java)
         }
