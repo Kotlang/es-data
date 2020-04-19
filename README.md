@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-            implementation("com.kotlang:EsData:0.13")
+            implementation("com.kotlang:EsData:0.15")
 }
 ```
 

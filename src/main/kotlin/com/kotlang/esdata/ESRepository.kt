@@ -7,7 +7,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.elasticsearch.action.delete.DeleteRequest
 import org.elasticsearch.action.get.GetRequest
 import org.elasticsearch.action.index.IndexRequest
+import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.common.xcontent.XContentType
+import org.elasticsearch.search.builder.SearchSourceBuilder
 import java.util.*
 
 open class ESRepository (
@@ -45,5 +47,14 @@ open class ESRepository (
 
         val request = DeleteRequest(entity.getIndexName(), entity.id())
         client.delete(request)
+    }
+
+    inline fun<reified T: ESEntity> search(indexName: String,
+                                           searchSourceBuilder: SearchSourceBuilder): List<T> {
+        val searchRequest = SearchRequest(indexName)
+        searchRequest.source(searchSourceBuilder)
+        val result = client.search(searchRequest).hits
+        return result.map { it.sourceAsString }
+            .map { mapper.readValue(it, object : TypeReference<T>() {}) }
     }
 }
