@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ESRepositoryTest {
+    //returns value returned by findById based on underlying mock getResponse
     private fun getDocumentFromMockResponse(mockGetResponse: GetResponse): TestEntity {
         val esClient = mock<ESClient> {
             on { get(any()) }.thenReturn(mockGetResponse)
@@ -19,7 +20,7 @@ class ESRepositoryTest {
         }
 
         val testRepo = ESRepository(esClient, mockIndexTemplate)
-        return testRepo.findById(TestEntity(domain = "test_domain")).get()
+        return testRepo.findById(TestEntity(domain = "test_domain"))!!
     }
 
     @Test

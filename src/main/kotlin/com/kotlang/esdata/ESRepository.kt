@@ -10,7 +10,6 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.common.xcontent.XContentType
 import org.elasticsearch.search.builder.SearchSourceBuilder
-import java.util.*
 
 open class ESRepository (
     val client: ESClient,
@@ -26,20 +25,17 @@ open class ESRepository (
         request.id(entity.id())
         request.source(mapper.writeValueAsString(entity), XContentType.JSON)
         client.index(request)
-        return findById(entity).get()
+        return findById(entity)!!
     }
 
-    inline fun<reified T: ESEntity> findById(entity: T): Optional<T> {
+    inline fun<reified T: ESEntity> findById(entity: T): T? {
         index.getOrCreateIndex(entity)
 
         val request = GetRequest(entity.getIndexName(), entity.id())
         val response = client.get(request)
         return if (response.isExists) {
-            val resEntity = mapper.readValue(response.sourceAsString, object : TypeReference<T>() {})
-            Optional.of(resEntity)
-        } else {
-            Optional.empty()
-        }
+            mapper.readValue(response.sourceAsString, object : TypeReference<T>() {})
+        } else null
     }
 
     inline fun<reified T: ESEntity> deleteById(entity: T) {
