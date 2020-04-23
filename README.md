@@ -13,14 +13,7 @@ Add following details to build.gradle.kts
 
 ```sh
 repositories {
-	maven {
-		name = "GitHubPackages"
-		url = uri("https://maven.pkg.github.com/Kotlang/es-data")
-		credentials {
-				username = System.env("USERNAME")
-				password = System.env("TOKEN")
-		}
-	}
+	maven { url = uri("https://maven.pkg.github.com/Kotlang/es-data") }
 }
 
 dependencies {
