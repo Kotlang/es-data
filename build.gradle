@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
     id("maven-publish")
 }
 
@@ -26,10 +26,10 @@ test {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 publishing {
@@ -47,7 +47,7 @@ publishing {
         gpr(MavenPublication) {
             groupId = 'com.kotlang'
             artifactId = 'EsData'
-            version = '0.16'
+            version = '0.17'
 
             from(components.java)
         }

@@ -13,11 +13,18 @@ Add following details to build.gradle.kts
 
 ```sh
 repositories {
-	maven { url = uri("https://maven.pkg.github.com/Kotlang/es-data") }
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/Kotlang/es-data")
+		credentials {
+				username = System.env("USERNAME")
+				password = System.env("TOKEN")
+		}
+	}
 }
 
 dependencies {
-            implementation("com.kotlang:EsData:0.16")
+            implementation("com.kotlang:EsData:0.17")
 }
 ```
 
